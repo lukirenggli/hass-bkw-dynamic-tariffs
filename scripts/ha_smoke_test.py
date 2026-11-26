@@ -7,6 +7,8 @@ import sys
 import tempfile
 from unittest.mock import AsyncMock, patch
 
+from homeassistant import loader
+from homeassistant.bootstrap import async_load_base_functionality
 from homeassistant.config_entries import ConfigEntries
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
@@ -23,6 +25,11 @@ async def main():
         hass=HomeAssistant(directory)
         hass.config_entries=ConfigEntries(hass,{})
         try:
+            # HomeAssistant() alone does not initialize the integration loader.
+            # Follow HA's bootstrap ordering before setting up any component:
+            # loader caches, then registries/helpers/config-entry storage.
+            loader.async_setup(hass)  # Synchronous callback, despite its name.
+            assert await async_load_base_functionality(hass), 'HA base initialization failed'
             assert await async_setup_component(hass,'homeassistant',{})
             from custom_components.bkw_dynamic_tariffs.api import BkwApi, BkwApiError
             from custom_components.bkw_dynamic_tariffs.price import PriceSlot, TariffData, day_bounds

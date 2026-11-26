@@ -63,3 +63,14 @@ Home-Assistant-Schnittstellen. Letztere sind **kein vollständiger HA-Laufzeitte
 
 Die optionale Dashboard-Beispielkarte ist YAML-/syntaktisch vorbereitet, aber
 konnte hier nicht in einer realen HA-Frontend-/ApexCharts-Installation geprüft werden.
+
+## CI bootstrap correction
+
+The real-HA smoke test initializes `loader.async_setup(hass)` and then awaits
+`async_load_base_functionality(hass)` before setting up the `homeassistant`
+component. Constructing `HomeAssistant` alone does not initialize the loader
+cache. This addresses the reported `KeyError: integrations` during test startup.
+The repository check also guards this initialization order.
+
+The full corrected smoke test still has to pass in GitHub Actions with HA
+2026.11.3. Offline syntax/order checks are not a successful real-HA test.

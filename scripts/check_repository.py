@@ -44,6 +44,9 @@ assert workflow.count('sys.version_info >= (3, 14, 2)') == 2
 assert workflow.count('actions/checkout@v7') == 3
 assert workflow.count('actions/setup-python@v7') == 2
 assert 'ignore:' not in workflow
+smoke = (ROOT/'scripts/ha_smoke_test.py').read_text()
+assert smoke.index('loader.async_setup(hass)') < smoke.index('await async_load_base_functionality(hass)') < smoke.index("await async_setup_component(hass,'homeassistant',{})")
+assert 'await loader.async_setup(hass)' not in smoke
 for required in ('README.md','LICENSE','PUBLISHING.md','TESTING.md','NOTICE.md','.github/workflows/validate.yml'):
     assert (ROOT/required).exists(),required
 assert (ROOT/'assets/banner.png').exists()

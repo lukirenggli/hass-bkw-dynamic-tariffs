@@ -35,6 +35,11 @@ Changelog, Dokumentation und Versionsprüfung vorbereiten und neu veröffentlich
 
 ### Was diese Korrektur ändert
 
+- HA-Smoke-Test initialisiert jetzt den Loader und die Basisfunktionen vor dem
+  Komponentenstart. Das behebt die gemeldete fehlende Loader-Struktur
+  (`KeyError: integrations`) in der Testvorbereitung. Der komplette reale
+  HA-Test muss anschliessend auf GitHub erneut laufen.
+
 - Feste Runner-Version **ubuntu-24.04**, statt einem wechselnden `ubuntu-latest`.
 - `actions/checkout@v7` und `actions/setup-python@v7` verwenden Node 24.
 - Python-Jobs verwenden **3.14** mit `check-latest: true`; eine zusätzliche

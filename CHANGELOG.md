@@ -5,6 +5,8 @@
 
 ### Marketplace / CI preparation fixes (before first release)
 
+- Initialize the Home Assistant integration loader and base registries/helpers before component setup in the real-HA smoke test; fixes the reported bootstrap `KeyError: integrations`.
+
 - Pin GitHub runners to Ubuntu 24.04; use stable Python 3.14 patches with a minimum-version check (3.14.2).
 - Update checkout and setup-python actions to v7 / Node 24.
 - Move the editable SVG icon to assets/icon.svg; keep only supported PNG brand images.
