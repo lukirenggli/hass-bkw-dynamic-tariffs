@@ -261,6 +261,15 @@ deiner Anlage ab.
 müssen fehlende Daten ausdrücklich behandeln und einen sicheren Gerätezustand
 haben. Prüfe zunächst mit Benachrichtigungen, bevor Geräte gesteuert werden.
 
+## Marketplace-Veröffentlichung
+
+Die Dateien sind für die Katalogeinreichung vorbereitet. Eine ZIP-Datei oder ein
+öffentliches Repository allein macht die Integration noch nicht global suchbar.
+GitHub-Topics und Beschreibung setzen, alle GitHub-Prüfungen bestehen lassen,
+einen vollständigen Release publizieren und die Aufnahme in `hacs/default`
+beantragen. Die Anleitung einschliesslich der aktuellen CI-Korrektur und des
+**expliziten Löschens der alten `brand/icon.svg`** steht in [PUBLISHING.md](PUBLISHING.md).
+
 ## Diagnose und Probleme
 
 - Einrichtung scheitert: Internetzugang zu `api.bkw.ch`, HTTP-Status und Logs prüfen.
@@ -285,7 +294,7 @@ keine Rechte an BKW-Daten oder Marken. Keine Abrechnungssoftware.
 
 **Vor Veröffentlichung:** lokale Unit-Tests und Strukturprüfung ausführen,
 GitHub-Checks bestehen lassen und im echten Home Assistant testen. Der
-Versionswert `1.0.0` ist vorbereitet; er bedeutet nicht, dass bereits ein Release
+Versionswert `1.1.0` ist vorbereitet; er bedeutet nicht, dass bereits ein Release
 publiziert oder eine Aufnahme in den Marketplace erfolgt ist.
 
 ## Entwicklung und Veröffentlichung
@@ -299,7 +308,7 @@ python3 scripts/check_repository.py
 ```
 
 Auf GitHub werden zusätzlich Marketplace-Validierung, Hassfest und ein
-Home-Assistant-Smoke-Test auf Python 3.14.2 ausgeführt. Die Unit-Tests benötigen
+Home-Assistant-Smoke-Test auf Python 3.14 (mindestens 3.14.2) unter Ubuntu 24.04 ausgeführt. Die Unit-Tests benötigen
 keine laufende Home-Assistant-Installation; API-Tests verwenden HTTP-Mocks und
 das Paket `aiohttp` aus `requirements-dev.txt`. Im GitHub-Testjob wird es automatisch bereitgestellt.
 

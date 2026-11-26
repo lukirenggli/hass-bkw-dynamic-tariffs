@@ -29,6 +29,21 @@ for name,size in [('icon.png',256),('icon@2x.png',512)]:
     content=(C/'brand'/name).read_bytes()
     assert content[:8]==b'\x89PNG\r\n\x1a\n'
     assert struct.unpack('>II',content[16:24])==(size,size)
+allowed_brand_images = {
+    'icon.png', 'icon@2x.png', 'logo.png', 'logo@2x.png',
+    'dark_icon.png', 'dark_icon@2x.png', 'dark_logo.png', 'dark_logo@2x.png',
+}
+assert all(p.is_file() and p.name in allowed_brand_images for p in (C/'brand').iterdir()), 'Unsupported brand image; SVG sources belong in assets/'
+assert (ROOT/'assets/icon.svg').exists()
+workflow = (ROOT/'.github/workflows/validate.yml').read_text()
+assert 'ubuntu-latest' not in workflow
+assert workflow.count('runs-on: ubuntu-24.04') == 4
+assert workflow.count('python-version: "3.14"') == 2
+assert workflow.count('check-latest: true') == 2
+assert workflow.count('sys.version_info >= (3, 14, 2)') == 2
+assert workflow.count('actions/checkout@v7') == 3
+assert workflow.count('actions/setup-python@v7') == 2
+assert 'ignore:' not in workflow
 for required in ('README.md','LICENSE','PUBLISHING.md','TESTING.md','NOTICE.md','.github/workflows/validate.yml'):
     assert (ROOT/required).exists(),required
 assert (ROOT/'assets/banner.png').exists()

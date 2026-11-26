@@ -3,6 +3,14 @@
 
 ## 1.1.0
 
+### Marketplace / CI preparation fixes (before first release)
+
+- Pin GitHub runners to Ubuntu 24.04; use stable Python 3.14 patches with a minimum-version check (3.14.2).
+- Update checkout and setup-python actions to v7 / Node 24.
+- Move the editable SVG icon to assets/icon.svg; keep only supported PNG brand images.
+- Guard brand file names and CI runner configuration in repository checks.
+- Correct stale README version text and document the required manual GitHub topics, old-file deletion and catalog submission.
+
 - Add all 19 screenshot entities with the exact requested enabled/disabled defaults.
 - Add a published-tariff forecast sensor with upcoming prices as structured attributes.
 - Add tomorrow's average, continuous cheap/expensive 2/4-hour windows and memberships.

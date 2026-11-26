@@ -4,20 +4,51 @@ Stand der geprüften Dokumentation: 26. November 2026.
 Das Paket ist vorbereitet; Repository, Release und Katalog-PR musst du selbst
 publizieren. Eine Katalogaufnahme oder bestandene GitHub-Checks werden nicht behauptet.
 
-## Bereits veröffentlichtes Repository auf 1.1.0 aktualisieren
+## Bestehendes Repository: Marketplace-/CI-Korrektur einspielen
 
-Deine Repo ist bereits vorhanden. Das neue ZIP entpacken, einen Branch z. B.
-`feature/planning-forecast` in GitHub Desktop erstellen und die enthaltenen
-Dateien in die lokale Repository-Kopie kopieren, vorhandene Dateien ersetzen.
-Den **.git-Ordner nicht löschen**. Bereits vorhandene eigene Dateien und
-`.gitattributes` behalten. `.github` und `.gitignore` aus dem Paket mitnehmen.
+Dieses Paket behält Version **1.1.0**, da der vorbereitete Release noch nicht
+veröffentlicht wurde. Ist bei dir inzwischen ein Release v1.1.0 erschienen,
+dessen Tag **nicht verschieben**: zuerst eine neue Version in `manifest.json`,
+Changelog, Dokumentation und Versionsprüfung vorbereiten und neu veröffentlichen.
 
-Commit Summary: **Add planning sensors and tariff forecast (1.1.0)**.
-Pushen, Pull Request nach main erstellen, alle GitHub-Checks bestehen lassen,
-in HA testen und anschliessend zusammenführen. Danach das Release **v1.1.0**
-erstellen. Für die globale Kataloglistung gilt weiterhin Schritt 6.
+1. In GitHub Desktop dein Repository auf den aktuellen Stand bringen und einen
+   Branch **fix/marketplace-validation** erstellen.
+2. ZIP entpacken und den **Inhalt** des Ordners `hass-bkw-dynamic-tariffs` in deine
+   lokale Repository-Kopie kopieren. Bestehende Dateien ersetzen; **.git**,
+   **.gitattributes** und eigene Dateien behalten. `.github` und `.gitignore`
+   mitkopieren. Keinen zusätzlichen Repository-Unterordner anlegen.
+3. **Wichtig bei Kopieren/Überschreiben:** die bisherige Datei
+   `custom_components/bkw_dynamic_tariffs/brand/icon.svg` explizit **löschen**.
+   Sie liegt neu unter `assets/icon.svg`. Ein Kopiervorgang entfernt die alte
+   Datei nicht automatisch; ohne Löschung bleibt die Hassfest-Warnung bestehen.
+   Die beiden PNG-Dateien im `brand`-Ordner unbedingt behalten.
+4. Commit Summary: **Fix Marketplace validation and CI runners**.
+   Optionale Description: **Pin Ubuntu 24.04, update GitHub actions, use Python
+   3.14 patches and move the SVG source out of the integration brand folder.**
+5. Pushen und Pull Request nach **main** erstellen. Die Topics im nächsten
+   Abschnitt **vor der Validierung** setzen. Ohne Topics bleibt der
+   Marketplace-Job rot, obwohl die Dateien korrekt sind.
+6. Alle vier Jobs grün werden lassen, Änderungen prüfen und zusammenführen.
+   Auch den abschliessenden Workflow auf **main** kontrollieren. Erst danach
+   **v1.1.0** als vollständigen Release veröffentlichen und die Katalogaufnahme
+   gemäss Schritt 6 beantragen.
 
-Der Versionswert ist vorbereitet und behauptet keinen bereits publizierten Release.
+### Was diese Korrektur ändert
+
+- Feste Runner-Version **ubuntu-24.04**, statt einem wechselnden `ubuntu-latest`.
+- `actions/checkout@v7` und `actions/setup-python@v7` verwenden Node 24.
+- Python-Jobs verwenden **3.14** mit `check-latest: true`; eine zusätzliche
+  Prüfung verlangt mindestens **3.14.2**. HA bleibt für reproduzierbare Tests
+  auf **2026.11.3** festgelegt.
+- In `brand/` bleiben ausschliesslich die unterstützten PNGs. Der bearbeitbare
+  SVG-Quelltext bleibt für Mitwirkende unter `assets/icon.svg` erhalten.
+- Strukturprüfung erkennt unzulässige Brand-Dateien und Rückfälle in der
+  Runner-/Python-Konfiguration.
+- Keine Marketplace-Prüfung wird ignoriert oder deaktiviert.
+
+Die Offline-Prüfung kann GitHub Actions, Hassfest und den echten
+Home-Assistant-Smoke-Test **nicht** ausführen. Nach dem Upload können dort
+weitere Fehler sichtbar werden; ein erfolgreicher CI-Lauf wird nicht behauptet.
 
 ## 1. Repository anlegen
 
@@ -40,7 +71,14 @@ Das Root muss u. a. `README.md`, `LICENSE`, `hacs.json`, `.github` und
 
 ## 2. GitHub-Metadaten setzen
 
-Unter **About** die Beschreibung und Topics setzen:
+Die Topics sind **GitHub-Metadaten**, keine Datei im ZIP. Rechts auf der
+Repository-Startseite bei **About** das Zahnrad anklicken. Eine Beschreibung
+als einfachen Text eintragen, ohne Markdown-Sternchen, zum Beispiel:
+
+**Dynamische Einspeisevergütung der BKW für Home Assistant mit Preissensoren,
+Tarifvorhersage und konfigurierbaren Schwellen.**
+
+Die folgenden **Topics einzeln hinzufügen** und speichern:
 `home-assistant`, `homeassistant`, `marketplace`, `hacs`, `bkw`, `dynamic-tariffs`,
 `feed-in`, `switzerland`, `energy`.
 
@@ -58,7 +96,7 @@ Der vorbereitete Workflow **Validate** enthält:
 - **unit-tests**: reine Python-Preis-/API-Tests und Struktur-/Asset-Prüfung.
 - **ha-smoke-test**: Import, Einrichtung, alle 31 registrierten Entitäten (14 aktiv, 17 optional), Options-/Number-
   Änderung ohne Netzwerkabruf, lokale Uhr, Refresh und Unload in echtem HA,
-  mit gemockter BKW-API. Python 3.14.2, HA 2026.11.3.
+  mit gemockter BKW-API. Python 3.14 (mindestens 3.14.2), Ubuntu 24.04, HA 2026.11.3.
 
 Warte, bis **alle Jobs grün sind**. Bei einem Fehler die Meldung beheben und erneut
 pushen. Der Offline-Erstellungstest ersetzt Hassfest und HA-Laufzeittests nicht.
