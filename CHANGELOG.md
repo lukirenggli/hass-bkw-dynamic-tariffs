@@ -5,6 +5,8 @@
 
 ### Marketplace / CI preparation fixes (before first release)
 
+- Load the real HA network component and preflight its HTTP/DNS client before the config flow in the smoke test; addresses the reported `KeyError: network`.
+
 - Initialize the Home Assistant integration loader and base registries/helpers before component setup in the real-HA smoke test; fixes the reported bootstrap `KeyError: integrations`.
 
 - Pin GitHub runners to Ubuntu 24.04; use stable Python 3.14 patches with a minimum-version check (3.14.2).

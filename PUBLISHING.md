@@ -35,6 +35,11 @@ Changelog, Dokumentation und Versionsprüfung vorbereiten und neu veröffentlich
 
 ### Was diese Korrektur ändert
 
+- Vor dem BKW-Einrichtungsdialog lädt der Smoke-Test jetzt auch die echte
+  HA-Netzwerkkomponente und prüft die HTTP-/DNS-Initialisierung. Dies adressiert
+  den gemeldeten `KeyError: network`. Keine Integrationsabhängigkeit wurde
+  hinzugefügt und kein Test wird übersprungen.
+
 - HA-Smoke-Test initialisiert jetzt den Loader und die Basisfunktionen vor dem
   Komponentenstart. Das behebt die gemeldete fehlende Loader-Struktur
   (`KeyError: integrations`) in der Testvorbereitung. Der komplette reale

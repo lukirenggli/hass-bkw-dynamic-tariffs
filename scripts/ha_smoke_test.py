@@ -12,6 +12,7 @@ from homeassistant.bootstrap import async_load_base_functionality
 from homeassistant.config_entries import ConfigEntries
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.setup import async_setup_component
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -31,6 +32,12 @@ async def main():
             loader.async_setup(hass)  # Synchronous callback, despite its name.
             assert await async_load_base_functionality(hass), 'HA base initialization failed'
             assert await async_setup_component(hass,'homeassistant',{})
+            # HA's HTTP DNS resolver uses network adapter configuration.
+            # Normal bootstrap loads network before integrations create sessions.
+            # Load the real component; do not fabricate hass.data['network'].
+            assert await async_setup_component(hass,'network',{}), 'HA network initialization failed'
+            async_get_clientsession(hass)  # Preflight the real HTTP/DNS stack.
+            print('PASS: HA loader, registries, network and HTTP client initialized')
             from custom_components.bkw_dynamic_tariffs.api import BkwApi, BkwApiError
             from custom_components.bkw_dynamic_tariffs.price import PriceSlot, TariffData, day_bounds
             from custom_components.bkw_dynamic_tariffs.const import CONF_HIGH, CONF_LOW

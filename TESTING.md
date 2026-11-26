@@ -74,3 +74,13 @@ The repository check also guards this initialization order.
 
 The full corrected smoke test still has to pass in GitHub Actions with HA
 2026.11.3. Offline syntax/order checks are not a successful real-HA test.
+
+### Network bootstrap correction
+
+Before the BKW config flow, the smoke test now sets up HA's real `network`
+component and creates the managed HTTP client session. This initializes network
+adapters required by HA's DNS/zeroconf resolver and addresses the reported
+`KeyError: network`. BKW API calls remain mocked. The network state is not
+replaced by a fake dictionary and no integration dependencies were changed.
+A preflight message distinguishes successful HTTP setup from later test stages.
+This corrected real-HA path still needs a successful GitHub Actions run.

@@ -47,6 +47,7 @@ assert 'ignore:' not in workflow
 smoke = (ROOT/'scripts/ha_smoke_test.py').read_text()
 assert smoke.index('loader.async_setup(hass)') < smoke.index('await async_load_base_functionality(hass)') < smoke.index("await async_setup_component(hass,'homeassistant',{})")
 assert 'await loader.async_setup(hass)' not in smoke
+assert smoke.index("await async_setup_component(hass,'network',{})") < smoke.index('async_get_clientsession(hass)') < smoke.index('hass.config_entries.flow.async_init')
 for required in ('README.md','LICENSE','PUBLISHING.md','TESTING.md','NOTICE.md','.github/workflows/validate.yml'):
     assert (ROOT/required).exists(),required
 assert (ROOT/'assets/banner.png').exists()
