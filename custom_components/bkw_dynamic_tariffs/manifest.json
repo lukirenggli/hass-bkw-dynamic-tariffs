@@ -1,0 +1,18 @@
+{
+  "domain": "bkw_dynamic_tariffs",
+  "name": "BKW Dynamic Tariffs",
+  "categories": [
+    "energy.energy_prices"
+  ],
+  "codeowners": [
+    "@lukirenggli"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/lukirenggli/hass-bkw-dynamic-tariffs",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/lukirenggli/hass-bkw-dynamic-tariffs/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "1.0.0"
+}

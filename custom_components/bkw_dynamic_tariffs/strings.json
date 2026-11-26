@@ -1,0 +1,78 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "BKW Dynamic Tariffs",
+        "description": "Dynamic feed-in remuneration, not a consumption tariff. No API key required. Fetched every 12 hours.",
+        "data": {
+          "high_threshold": "Upper price threshold (CHF/kWh)",
+          "low_threshold": "Lower price threshold (CHF/kWh)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot reach BKW or tariff data is invalid.",
+      "invalid_thresholds": "Lower threshold must not exceed upper threshold. Range: -10 to 10 CHF/kWh."
+    },
+    "abort": {
+      "already_configured": "Already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Price thresholds",
+        "data": {
+          "high_threshold": "Upper price threshold (CHF/kWh)",
+          "low_threshold": "Lower price threshold (CHF/kWh)"
+        }
+      }
+    },
+    "error": {
+      "invalid_thresholds": "Lower threshold must not exceed upper threshold. Range: -10 to 10 CHF/kWh."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_price": {
+        "name": "Current price"
+      },
+      "average_today": {
+        "name": "Average price today"
+      },
+      "maximum_today": {
+        "name": "Maximum price today"
+      },
+      "minimum_today": {
+        "name": "Minimum price today"
+      },
+      "next_change": {
+        "name": "Next price change"
+      },
+      "last_api_update": {
+        "name": "Last API update"
+      }
+    },
+    "binary_sensor": {
+      "above_high": {
+        "name": "Above upper price threshold"
+      },
+      "below_low": {
+        "name": "Below lower price threshold"
+      }
+    },
+    "button": {
+      "refresh_tariffs": {
+        "name": "Refresh tariffs"
+      }
+    },
+    "number": {
+      "high_threshold": {
+        "name": "Upper price threshold"
+      },
+      "low_threshold": {
+        "name": "Lower price threshold"
+      }
+    }
+  }
+}

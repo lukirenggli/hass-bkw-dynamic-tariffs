@@ -1,0 +1,78 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "BKW Dynamic Tariffs",
+        "description": "Dynamische Einspeisevergütung, kein Bezugstarif. Kein API-Schlüssel erforderlich. Abruf alle 12 Stunden.",
+        "data": {
+          "high_threshold": "Preisschwelle oben (CHF/kWh)",
+          "low_threshold": "Preisschwelle unten (CHF/kWh)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "BKW-API nicht erreichbar oder Tarifdaten ungültig.",
+      "invalid_thresholds": "Die untere Schwelle darf nicht höher als die obere sein. Wertebereich: -10 bis 10 CHF/kWh."
+    },
+    "abort": {
+      "already_configured": "Bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Preisschwellen",
+        "data": {
+          "high_threshold": "Preisschwelle oben (CHF/kWh)",
+          "low_threshold": "Preisschwelle unten (CHF/kWh)"
+        }
+      }
+    },
+    "error": {
+      "invalid_thresholds": "Die untere Schwelle darf nicht höher als die obere sein. Wertebereich: -10 bis 10 CHF/kWh."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_price": {
+        "name": "Aktueller Preis"
+      },
+      "average_today": {
+        "name": "Durchschnittspreis heute"
+      },
+      "maximum_today": {
+        "name": "Maximaler Preis heute"
+      },
+      "minimum_today": {
+        "name": "Minimaler Preis heute"
+      },
+      "next_change": {
+        "name": "Nächster Preiswechsel"
+      },
+      "last_api_update": {
+        "name": "Letzte API-Aktualisierung"
+      }
+    },
+    "binary_sensor": {
+      "above_high": {
+        "name": "Über oberer Preisschwelle"
+      },
+      "below_low": {
+        "name": "Unter unterer Preisschwelle"
+      }
+    },
+    "button": {
+      "refresh_tariffs": {
+        "name": "Tarife aktualisieren"
+      }
+    },
+    "number": {
+      "high_threshold": {
+        "name": "Preisschwelle oben"
+      },
+      "low_threshold": {
+        "name": "Preisschwelle unten"
+      }
+    }
+  }
+}
