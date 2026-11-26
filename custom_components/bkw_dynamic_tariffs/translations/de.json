@@ -51,6 +51,36 @@
       },
       "last_api_update": {
         "name": "Letzte API-Aktualisierung"
+      },
+      "forecast": {
+        "name": "Tarifvorhersage"
+      },
+      "average_tomorrow": {
+        "name": "Durchschnittspreis morgen"
+      },
+      "cheap_2h_today": {
+        "name": "Günstigstes 2-Stunden-Fenster heute"
+      },
+      "cheap_2h_tomorrow": {
+        "name": "Günstigstes 2-Stunden-Fenster morgen"
+      },
+      "cheap_4h_today": {
+        "name": "Günstigstes 4-Stunden-Fenster heute"
+      },
+      "cheap_4h_tomorrow": {
+        "name": "Günstigstes 4-Stunden-Fenster morgen"
+      },
+      "expensive_2h_today": {
+        "name": "Teuerstes 2-Stunden-Fenster heute"
+      },
+      "expensive_2h_tomorrow": {
+        "name": "Teuerstes 2-Stunden-Fenster morgen"
+      },
+      "expensive_4h_today": {
+        "name": "Teuerstes 4-Stunden-Fenster heute"
+      },
+      "expensive_4h_tomorrow": {
+        "name": "Teuerstes 4-Stunden-Fenster morgen"
       }
     },
     "binary_sensor": {
@@ -59,6 +89,36 @@
       },
       "below_low": {
         "name": "Unter unterer Preisschwelle"
+      },
+      "in_cheap_2h_today": {
+        "name": "Im günstigsten 2-Stunden-Fenster heute"
+      },
+      "in_cheap_4h_today": {
+        "name": "Im günstigsten 4-Stunden-Fenster heute"
+      },
+      "cheap_10_today": {
+        "name": "Günstigste 10 % der Preis-Slots heute"
+      },
+      "cheap_25_today": {
+        "name": "Günstigste 25 % der Preis-Slots heute"
+      },
+      "cheap_50_today": {
+        "name": "Günstigste 50 % der Preis-Slots heute"
+      },
+      "in_expensive_2h_today": {
+        "name": "Im teuersten 2-Stunden-Fenster heute"
+      },
+      "in_expensive_4h_today": {
+        "name": "Im teuersten 4-Stunden-Fenster heute"
+      },
+      "expensive_10_today": {
+        "name": "Teuerste 10 % der Preis-Slots heute"
+      },
+      "expensive_25_today": {
+        "name": "Teuerste 25 % der Preis-Slots heute"
+      },
+      "expensive_50_today": {
+        "name": "Teuerste 50 % der Preis-Slots heute"
       }
     },
     "button": {

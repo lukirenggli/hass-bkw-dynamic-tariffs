@@ -1,0 +1,50 @@
+# Optional: install ApexCharts Card separately from the Marketplace.
+# Replace this illustrative entity ID with YOUR tariff-forecast entity ID.
+# Published intervals only, no estimated values. Graph covers the next 48 hours.
+type: custom:apexcharts-card
+header:
+  show: true
+  title: BKW - veroeffentlichte Einspeisetarife
+  show_states: false
+graph_span: 48h
+span:
+  start: minute
+update_interval: 1min
+now:
+  show: true
+  label: Jetzt
+yaxis:
+  - decimals: 3
+apex_config:
+  yaxis:
+    title:
+      text: CHF/kWh
+  xaxis:
+    type: datetime
+series:
+  - entity: sensor.bkw_dynamic_tariffs_tarifvorhersage
+    name: Einspeiseverguetung
+    color: '#A67500'
+    curve: stepline
+    stroke_width: 2
+    extend_to: false
+    show:
+      in_header: false
+    data_generator: |
+      const slots = entity.attributes.forecast || [];
+      const points = [];
+      let previousEnd = null;
+      for (const slot of slots) {
+        const start = Date.parse(slot.start);
+        const end = Date.parse(slot.end);
+        if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start) continue;
+        if (previousEnd !== null && start > previousEnd) {
+          points.push([previousEnd, null]);
+          points.push([start - 1, null]);
+        }
+        points.push([start, slot.price]);
+        points.push([end - 1, slot.price]);
+        previousEnd = end;
+      }
+      if (previousEnd !== null) points.push([previousEnd, null]);
+      return points;

@@ -4,6 +4,21 @@ Stand der geprüften Dokumentation: 26. November 2026.
 Das Paket ist vorbereitet; Repository, Release und Katalog-PR musst du selbst
 publizieren. Eine Katalogaufnahme oder bestandene GitHub-Checks werden nicht behauptet.
 
+## Bereits veröffentlichtes Repository auf 1.1.0 aktualisieren
+
+Deine Repo ist bereits vorhanden. Das neue ZIP entpacken, einen Branch z. B.
+`feature/planning-forecast` in GitHub Desktop erstellen und die enthaltenen
+Dateien in die lokale Repository-Kopie kopieren, vorhandene Dateien ersetzen.
+Den **.git-Ordner nicht löschen**. Bereits vorhandene eigene Dateien und
+`.gitattributes` behalten. `.github` und `.gitignore` aus dem Paket mitnehmen.
+
+Commit Summary: **Add planning sensors and tariff forecast (1.1.0)**.
+Pushen, Pull Request nach main erstellen, alle GitHub-Checks bestehen lassen,
+in HA testen und anschliessend zusammenführen. Danach das Release **v1.1.0**
+erstellen. Für die globale Kataloglistung gilt weiterhin Schritt 6.
+
+Der Versionswert ist vorbereitet und behauptet keinen bereits publizierten Release.
+
 ## 1. Repository anlegen
 
 Auf [GitHub / neues Repository](https://github.com/new) als **lukirenggli**:
@@ -41,7 +56,7 @@ Der vorbereitete Workflow **Validate** enthält:
   **keine ignorierten Prüfungen**.
 - **hassfest**: offizieller Home-Assistant-Validator.
 - **unit-tests**: reine Python-Preis-/API-Tests und Struktur-/Asset-Prüfung.
-- **ha-smoke-test**: Import, Einrichtung, alle elf Entitäten, Options-/Number-
+- **ha-smoke-test**: Import, Einrichtung, alle 31 registrierten Entitäten (14 aktiv, 17 optional), Options-/Number-
   Änderung ohne Netzwerkabruf, lokale Uhr, Refresh und Unload in echtem HA,
   mit gemockter BKW-API. Python 3.14.2, HA 2026.11.3.
 
@@ -53,13 +68,13 @@ Teste anschliessend in deiner eigenen Home-Assistant-Installation gemäss [TESTI
 
 Nach bestandenen Checks **Releases > Draft a new release**:
 
-- Tag: **v1.0.0**, Zielbranch: **main**.
-- Titel: **BKW Dynamic Tariffs 1.0.0**.
+- Tag: **v1.1.0**, Zielbranch: **main**.
+- Titel: **BKW Dynamic Tariffs 1.1.0**.
 - Release Notes aus [CHANGELOG.md](CHANGELOG.md), plus bekannte Einschränkung
   der 12-Stunden-Abdeckung.
 - Als normales Release veröffentlichen, nicht Draft und nicht Pre-release.
 
-`manifest.json` enthält die Version `1.0.0`. Nur ein Tag reicht für den Katalog nicht.
+`manifest.json` enthält die Version `1.1.0`. Nur ein Tag reicht für den Katalog nicht.
 Ein zusätzliches ZIP-Release-Asset ist nicht nötig: `zip_release` ist nicht gesetzt.
 Marketplace installiert die Integration aus den Repository-Dateien am Release-Tag.
 

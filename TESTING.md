@@ -20,7 +20,8 @@ Vorher ein Backup erstellen. Erste Automationen nur mit Benachrichtigungen teste
 
 - [ ] Repository über **Marketplace > Add from link** hinzufügen und installieren.
 - [ ] Einrichtung mit Beispielschnitten oben 0.150, unten 0.050 CHF/kWh.
-- [ ] Genau ein Gerät; sechs Sensoren, zwei Binary Sensoren, zwei Numbers, ein Button.
+- [ ] Genau ein Gerät; 31 registrierte Entitäten, davon 14 aktiv und 17 deaktiviert.
+- [ ] Alle 17 optionalen Sensoren aktivieren, dann die Zustände und Optionen prüfen.
 - [ ] Aktuellen Preis und Intervallgrenzen mit der BKW-API vergleichen.
 - [ ] Preiswechsel erfolgt ohne weiteren API-Abruf; Countdown sinkt minütlich.
 - [ ] Gleiche Folgepreise erzeugen keinen fiktiven Preiswechsel.
@@ -38,3 +39,27 @@ Vorher ein Backup erstellen. Erste Automationen nur mit Benachrichtigungen teste
 
 Das API-Intervall ist ein Coordinator-Pollingintervall, kein garantierter wall-clock
 Cron-Zeitpunkt. Einrichtung, Neustarts und manuelle Abrufe sind zusätzliche Requests.
+
+
+## Erweiterungstest 1.1.0
+
+Offline bestehen **74 Tests**: 36 bisherige API-/Preis-Tests, 23 Planungs-Tests
+und 15 Verhaltens-Tests der tatsächlichen Integrationsmethoden mit gemockten
+Home-Assistant-Schnittstellen. Letztere sind **kein vollständiger HA-Laufzeittest**.
+
+- [ ] Erstes Bild: günstigstes 4h-Fenster morgen und heutige 4h-Mitgliedschaft aktiv.
+- [ ] Zweites Bild: genau die 17 entsprechenden Entitäten standardmässig deaktiviert.
+- [ ] Aktivierte optionale Entitäten bleiben nach Neustart/Update aktiviert.
+- [ ] Vorhersage-Zustand zeigt das nächste kommende Intervall; `forecast` nur Zukunft.
+- [ ] Keine Zukunftsdaten: Vorhersage und morgen-Fenster unavailable, nicht erfunden.
+- [ ] Zeitfenster-Sensoren haben Start/Ende und gewichteten Durchschnitt.
+- [ ] Fenster-Mitgliedschaft wird am Start on und am Ende off.
+- [ ] Gleiche Preise: frühestes Fenster; Prozentgruppen enthalten alle Preisgleichstände.
+- [ ] Tageslücke: Ranking und Fenster unavailable, keine falschen Extremwerte.
+- [ ] Letzte API-Aktualisierung ändert sich nicht bei lokalem Preiswechsel.
+- [ ] `local_updated_at` und `evaluated_at` ändern sich bei lokaler Auswertung.
+- [ ] Alter API-Fehler + schneller Refresh-Klick meldet keinen fiktiven neuen Fehler.
+- [ ] HA-Smoke-Test aktiviert alle optionalen Entitäten und prüft das Neuladen.
+
+Die optionale Dashboard-Beispielkarte ist YAML-/syntaktisch vorbereitet, aber
+konnte hier nicht in einer realen HA-Frontend-/ApexCharts-Installation geprüft werden.

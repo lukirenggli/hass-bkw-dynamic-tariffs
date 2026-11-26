@@ -51,6 +51,36 @@
       },
       "last_api_update": {
         "name": "Last API update"
+      },
+      "forecast": {
+        "name": "Tariff forecast"
+      },
+      "average_tomorrow": {
+        "name": "Average price tomorrow"
+      },
+      "cheap_2h_today": {
+        "name": "Cheapest 2-hour window today"
+      },
+      "cheap_2h_tomorrow": {
+        "name": "Cheapest 2-hour window tomorrow"
+      },
+      "cheap_4h_today": {
+        "name": "Cheapest 4-hour window today"
+      },
+      "cheap_4h_tomorrow": {
+        "name": "Cheapest 4-hour window tomorrow"
+      },
+      "expensive_2h_today": {
+        "name": "Most expensive 2-hour window today"
+      },
+      "expensive_2h_tomorrow": {
+        "name": "Most expensive 2-hour window tomorrow"
+      },
+      "expensive_4h_today": {
+        "name": "Most expensive 4-hour window today"
+      },
+      "expensive_4h_tomorrow": {
+        "name": "Most expensive 4-hour window tomorrow"
       }
     },
     "binary_sensor": {
@@ -59,6 +89,36 @@
       },
       "below_low": {
         "name": "Below lower price threshold"
+      },
+      "in_cheap_2h_today": {
+        "name": "In the cheapest 2-hour window today"
+      },
+      "in_cheap_4h_today": {
+        "name": "In the cheapest 4-hour window today"
+      },
+      "cheap_10_today": {
+        "name": "Cheapest 10% of price slots today"
+      },
+      "cheap_25_today": {
+        "name": "Cheapest 25% of price slots today"
+      },
+      "cheap_50_today": {
+        "name": "Cheapest 50% of price slots today"
+      },
+      "in_expensive_2h_today": {
+        "name": "In the most expensive 2-hour window today"
+      },
+      "in_expensive_4h_today": {
+        "name": "In the most expensive 4-hour window today"
+      },
+      "expensive_10_today": {
+        "name": "Most expensive 10% of price slots today"
+      },
+      "expensive_25_today": {
+        "name": "Most expensive 25% of price slots today"
+      },
+      "expensive_50_today": {
+        "name": "Most expensive 50% of price slots today"
       }
     },
     "button": {

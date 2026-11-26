@@ -12,6 +12,7 @@ for path in ROOT.rglob('*.json'):
     json.loads(path.read_text(encoding='utf-8'))
 manifest=json.loads((C/'manifest.json').read_text())
 hacs=json.loads((ROOT/'hacs.json').read_text())
+assert manifest['version']=='1.1.0'
 assert manifest['domain']==C.name
 assert manifest['codeowners']==['@lukirenggli']
 assert manifest['categories']==['energy.energy_prices']

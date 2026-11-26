@@ -93,6 +93,128 @@ der Countdown ist dann `unavailable`, während der aktuelle Preis noch gültig s
   `covered_minutes`, `expected_minutes`, `slots_count`.
 - Binary Sensor: `threshold`, `price_unit`, `comparison`.
 
+
+## Erweiterte Sensoren ab Version 1.1.0
+
+Die Integration legt insgesamt **31 Entitäten** an: 16 Sensoren, 12 Binary
+Sensoren, zwei Numbers und einen Button. **14 sind standardmässig aktiv**, die
+**17 optionalen Entitäten aus dem zweiten Screenshot sind deaktiviert**.
+Ein Benutzer kann sie jederzeit aktivieren; die Integration überschreibt seine
+Entscheidung bei Updates nicht.
+
+### Zusätzlich standardmässig aktiv
+
+| Entität | Typ / Zustand |
+|---|---|
+| Günstigstes 4-Stunden-Fenster morgen | Sensor: zeitgewichteter Durchschnitt des Fensters in CHF/kWh |
+| Im günstigsten 4-Stunden-Fenster heute | Binary Sensor: `on` innerhalb des ausgewählten Fensters |
+| Tarifvorhersage | Sensor: Preis des nächsten veröffentlichten zukünftigen Intervalls in CHF/kWh |
+
+Die ersten beiden Entitäten entsprechen dem ersten Screenshot.
+
+### Standardmässig deaktiviert
+
+| Entitäten | Typ | Anzahl |
+|---|---|---|
+| Durchschnittspreis morgen | Sensor | 1 |
+| Günstigstes 2-Stunden-Fenster heute / morgen | Sensor | 2 |
+| Günstigstes 4-Stunden-Fenster heute | Sensor | 1 |
+| Teuerstes 2-Stunden-Fenster heute / morgen | Sensor | 2 |
+| Teuerstes 4-Stunden-Fenster heute / morgen | Sensor | 2 |
+| Günstigste 10 %, 25 %, 50 % der Preis-Slots heute | Binary Sensor | 3 |
+| Teuerste 10 %, 25 %, 50 % der Preis-Slots heute | Binary Sensor | 3 |
+| Im günstigsten 2-Stunden-Fenster heute | Binary Sensor | 1 |
+| Im teuersten 2-Stunden-Fenster heute | Binary Sensor | 1 |
+| Im teuersten 4-Stunden-Fenster heute | Binary Sensor | 1 |
+
+**Aktivieren:** Einstellungen > Geräte & Dienste > BKW Dynamic Tariffs > Gerät
+öffnen > deaktivierte Entitäten anzeigen > gewünschte Entität auswählen und
+aktivieren. Alternativ in der Entitätenliste nach der Integration und deaktivierten
+Entitäten filtern. Kein zusätzlicher API-Abruf ist für diese Berechnung erforderlich.
+
+### Bedeutung der Zeitfenster und Prozentgruppen
+
+- Fenster werden über den **ganzen heutigen bzw. morgigen Schweizer Kalendertag**
+  ausgewählt, nicht nur über dessen noch verbleibende Stunden. Ein heutiges Fenster
+  kann deshalb bereits vergangen sein.
+- Ein Fenster besteht aus **durchgehenden echten zwei oder vier Stunden**. Die
+  Berechnung gewichtet nach Dauer, berücksichtigt verschiedene Intervalllängen und
+  bleibt an Tagen mit Zeitumstellung korrekt.
+- Alle relevanten Start- und Endgrenzen werden geprüft, auch wenn ein optimales
+  Fenster nicht exakt am Beginn eines Preisintervalls startet.
+- Bei gleich guten Fenstern wird das **früheste** ausgewählt. Der Binary Sensor
+  bezieht sich genau auf dieses Fenster, nicht auf alle gleich guten Alternativen.
+- `start` und `end` stehen als ISO-Zeitstempel in UTC in den Attributen. Home
+  Assistant stellt Zeitstempel nach seinen lokalen Anzeigeeinstellungen dar;
+  Textattribute können UTC zeigen. Der Tag wird immer in `Europe/Zurich` berechnet.
+- Start inklusive, Ende exklusive: der Binary Sensor wird am Ende `off`.
+- Prozentgruppen ordnen **Preis-Slots**, nicht Energiemengen. Die Grenzposition wird
+  aufgerundet. Alle gleich teuren Slots am Grenzpreis sind enthalten; dadurch
+  können mehr als z. B. 10 % ausgewählt werden. Attribute: `requested_percent`,
+  `actual_percent`, `threshold`, `selected_slots`, `total_slots`, `slots`.
+- Ohne vollständigen Tagesplan sind Ranking, Tagesmittel und Zeitfenster
+  **nicht verfügbar**. Eine Datenlücke wird nicht als günstiges Nullpreisfenster
+  interpretiert. Auch Mitgliedschafts-Sensoren werden nicht fälschlich `off`.
+- Beim Einspeisetarif bedeutet **teuer = höhere Vergütung**, nicht höhere
+  Strombezugskosten. Günstige Einspeisepreise sind entsprechend niedrige Vergütungen.
+
+### Tarifvorhersage: veröffentlichter Plan, keine Schätzung
+
+Der Zustand des Sensors **Tarifvorhersage** ist der Preis des nächsten
+veröffentlichten Intervalls, dessen Start **nach der aktuellen Zeit** liegt.
+Das bereits laufende Intervall gehört zum Sensor **Aktueller Preis**. Der
+Vorhersage-Sensor ist bewusst kein gleitender Mittelwert und hat keine
+Langzeitstatistik-State-Class.
+
+Alle erhaltenen zukünftigen Intervalle stehen im Attribut **`forecast`**:
+
+```json
+[
+  {"start": "2026-11-27T12:00:00+00:00", "end": "2026-11-27T12:15:00+00:00", "price": 0.05},
+  {"start": "2026-11-27T12:15:00+00:00", "end": "2026-11-27T12:30:00+00:00", "price": 0.08}
+]
+```
+
+Dies ist ein **Formatbeispiel mit erfundenen Beispielwerten**, keine BKW-Prognose.
+Weitere Attribute: `forecast_count`, `forecast_start`, `forecast_end`,
+`contiguous`, `price_unit`, `publication_timestamp`, `source`, `prediction_model`.
+`prediction_model` ist immer `false`: Preise werden weder extrapoliert noch
+interpoliert. `contiguous: false` weist auf Lücken im zukünftigen Plan hin.
+
+Die Liste wird bei jedem lokalen Tick aktualisiert: sobald ein Intervall beginnt,
+verschwindet es aus der Zukunftsliste. Ohne zukünftiges Intervall ist der Sensor
+`unavailable`, selbst wenn der aktuelle Preis noch verfügbar ist.
+
+Eine normale HA-Verlaufskarte zeigt den Verlauf des skalaren Sensorzustands,
+**nicht** automatisch die zukünftigen Attribute. Eine optionale ApexCharts-
+Beispielkarte unter [examples/forecast-apexcharts.yaml](examples/forecast-apexcharts.yaml)
+zeigt die veröffentlichten Preise als Stufenlinie und kennzeichnet Lücken. Hierfür
+muss ApexCharts separat aus dem Marketplace installiert sein; es ist keine
+Abhängigkeit der Integration. Die tatsächliche Entity-ID deiner Tarifvorhersage
+anstelle der Beispiel-ID einsetzen.
+
+### Aktivität und Preiswechsel
+
+Alle Entitäten lesen denselben **Zeit-Snapshot** des Coordinators. Damit passen
+aktueller Preis, Countdown, Ranking und Fenster-Mitgliedschaft an Preisgrenzen
+zusammen. Der Snapshot wird lokal an Minuten-, Tarif- und Fenstergrenzen sowie
+nach jedem abgeschlossenen API-Versuch neu berechnet.
+
+- `evaluated_at`: gemeinsame lokale Auswertungszeit der Sensoren.
+- **Letzte API-Aktualisierung** bleibt der Zeitpunkt des letzten erfolgreich
+  übernommenen API-Abrufs. Ein lokaler Preiswechsel ändert diesen Zeitpunkt nicht.
+- Diagnoseattribute `local_updated_at` und `last_api_attempt` unterscheiden
+  lokale Berechnung und tatsächlichen Netzwerkversuch; `last_api_success` zeigt
+  den Erfolg des letzten API-Versuchs.
+- Gleichbleibende Folgepreise sind kein Preiswechsel. Ein unbekannter Folgepreis
+  wird nicht durch das reine Ende des aktuellen Intervalls ersetzt.
+- Beim Entladen wird der lokale Timer beendet. Ein verspäteter Callback darf
+  ihn nicht wieder starten. Mehrfache manuelle Tick-Aufrufe hinterlassen keine
+  doppelten Timer.
+- Schnelle Aktualisieren-Klicks können gebündelt werden. Die Schaltfläche meldet
+  nicht mehr einen alten API-Fehler als Ergebnis einer erst vorgemerkten Anfrage;
+  den tatsächlichen Abschluss zeigen die Diagnoseattribute.
+
 ## Aktualisierung und Datenqualität
 
 - **Netzwerk:** ein Abruf beim Einrichten zur API-Prüfung, ein Abruf beim Laden
@@ -188,6 +310,8 @@ consumption tariffs. Home Assistant 2026.11+ is required. Install through
 **Settings > Marketplace > Add from link**, using this repository URL until it
 joins the catalog. No API key is needed.
 
+Version 1.1.0 adds 2/4-hour windows, percentile membership, tomorrow statistics
+and a published-tariff forecast. There are 31 entities, 17 disabled by default.
 Network polling is every 12 hours; current price, threshold states and countdown
 advance locally. All prices and thresholds use CHF/kWh. Daily mean/min/max require
 a complete Swiss calendar day (`Europe/Zurich`), with a duration-weighted mean.

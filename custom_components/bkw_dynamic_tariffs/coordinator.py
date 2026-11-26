@@ -10,7 +10,7 @@ from homeassistant.util import dt as dt_util
 from .api import BkwApi, BkwApiError
 from .const import (CONF_HIGH, CONF_LOW, DEFAULT_HIGH, DEFAULT_LOW, MAX_THRESHOLD,
                     MIN_THRESHOLD, NAME, UPDATE_INTERVAL)
-from .price import InvalidTariffs, TariffData, merge_tariffs
+from .price import InvalidTariffs, TariffData, merge_tariffs, build_snapshot
 _LOGGER = logging.getLogger(__name__)
 
 class BkwCoordinator(DataUpdateCoordinator[TariffData]):
@@ -19,9 +19,14 @@ class BkwCoordinator(DataUpdateCoordinator[TariffData]):
         self.entry = entry
         self.api = api
         self._cancel_tick: CALLBACK_TYPE | None = None
+        self._clock_started = False
+        self.local_updated_at = dt_util.utcnow()
+        self.last_api_attempt = None
+        self.snapshot = None
 
     async def _async_update_data(self) -> TariffData:
         try:
+            self.last_api_attempt = dt_util.utcnow()
             incoming = await self.api.async_fetch()
             result = merge_tariffs(self.data, incoming, dt_util.utcnow())
             if not result.slots:
@@ -47,17 +52,25 @@ class BkwCoordinator(DataUpdateCoordinator[TariffData]):
 
     @callback
     def start_clock(self) -> None:
+        self._clock_started = True
         self._schedule_tick()
 
     @callback
     def stop_clock(self) -> None:
+        self._clock_started = False
+        self._cancel_pending_tick()
+
+    @callback
+    def _cancel_pending_tick(self) -> None:
         if self._cancel_tick:
             self._cancel_tick()
             self._cancel_tick = None
 
     @callback
     def _schedule_tick(self) -> None:
-        self.stop_clock()
+        self._cancel_pending_tick()
+        if not self._clock_started:
+            return
         now = dt_util.utcnow()
         when = now.replace(second=0,microsecond=0) + timedelta(minutes=1)
         if self.data:
@@ -65,16 +78,32 @@ class BkwCoordinator(DataUpdateCoordinator[TariffData]):
                 for boundary in (slot.start,slot.end):
                     if now < boundary < when:
                         when = boundary
+        if self.snapshot:
+            for day in ("today", "tomorrow"):
+                for window in self.snapshot[day]["windows"].values():
+                    if window:
+                        for boundary in (window.start, window.end):
+                            if now < boundary < when:
+                                when = boundary
         self._cancel_tick = async_track_point_in_utc_time(self.hass,self._tick,when)
 
     @callback
     def _tick(self, now: datetime) -> None:
-        self._cancel_tick = None
+        self._cancel_pending_tick()
+        if not self._clock_started:
+            return
+        self._recalculate(now)
         # Do NOT use async_set_updated_data: it resets the API polling timer.
         self.async_update_listeners()
         self._schedule_tick()
 
     @callback
     def _async_refresh_finished(self) -> None:
-        if self._cancel_tick is not None:
+        self._recalculate(dt_util.utcnow())
+        if self._clock_started:
             self._schedule_tick()
+
+    @callback
+    def _recalculate(self, now: datetime) -> None:
+        self.local_updated_at = now
+        self.snapshot = build_snapshot(self.data.slots, now) if self.data else None
